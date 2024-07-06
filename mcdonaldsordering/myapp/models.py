@@ -5,3 +5,10 @@ from django.db import models
 class TodoItem(models.Model):
   title = models.CharField(max_length=200)
   completed = models.BooleanField(default=False)
+
+class MenuItem(models.Model):
+  name = models.CharField(max_length=200)
+  price = models.IntegerField()
+  image = models.ImageField()
+  category = models.CharField(max_length=200)
+  description = models.CharField
