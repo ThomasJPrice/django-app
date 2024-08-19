@@ -155,9 +155,9 @@
       })
         .then(response => response.json())
         .then(data => {
-          // alert('Thank you for your order!')
-          // clearCart()
-          // window.location.href = '/progress/'
+          alert(`Thank you for your order! Your order number is ${data.order_id}.`)
+          clearCart()
+          window.location.href = '/progress/'
         })
         .catch(error => {
           console.error('Error:', error);

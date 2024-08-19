@@ -12,6 +12,7 @@ urlpatterns = [
   
   # api routes
   path('checkout/', views.checkout, name='checkout'),
+  path('get-orders/', views.getOrders, name='get-orders'),
   
   path("__reload__/", include("django_browser_reload.urls")),
 ]

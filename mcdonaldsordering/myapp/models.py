@@ -30,12 +30,10 @@ class MenuItem(models.Model):
         return self.name
 
 class Order(models.Model):
-    PENDING = 'Pending'
     IN_PROGRESS = 'In Progress'
     COMPLETED = 'Completed'
 
     STATUS_CHOICES = [
-        (PENDING, 'Pending'),
         (IN_PROGRESS, 'In Progress'),
         (COMPLETED, 'Completed'),
     ]
@@ -44,7 +42,7 @@ class Order(models.Model):
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default=PENDING,
+        default=IN_PROGRESS,
     )
     
     items = models.CharField(max_length=200)
