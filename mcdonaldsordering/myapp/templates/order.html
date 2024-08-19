@@ -1,6 +1,7 @@
-{% extends "base.html" %} {% block title %} Home Page {% endblock %}
+{% extends "base.html" %}
+{% block title %}Order Page{% endblock %}
 {% block content %}
-<div class="mt-4 flex flex-col items-center">
+<div class="mt-4 flex flex-col items-center text-[#333333]">
   <!-- section title -->
   <h2 class="text-center flex flex-col items-center gap-2 font-semibold text-[#1E3A8A] text-3xl md:text-4xl">
     Menu
@@ -8,6 +9,181 @@
     <div class="w-1/2 h-[1px] bg-[#1E3A8A]"></div>
   </h2>
 
-  
+  <!-- Cart Summary -->
+  <div id="cart-summary" class="xl:fixed max-xl:mt-8 right-0 top-0 h-full flex justify-center flex-col">
+
+    <div class="bg-[#60A5FA] bg-opacity-20 rounded-l-md p-4 shadow-md w-[209px]">
+      <div>
+        <h3 class="text-xl font-semibold text-[#1E3A8A] mb-2">Cart</h3>
+        <ul id="cart-items" class="">
+          <!-- Cart items will be dynamically inserted here -->
+        </ul>
+      </div>
+      <p id="empty-cart-message" class="hidden text-center">Your cart is empty.</p>
+
+      <button id="checkout-button"
+        class="w-full bg-[#1E3A8A] hover:bg-opacity-90 transition-all text-[#f5f5f5] font-semibold py-2 rounded-sm mt-4">Checkout</button>
+
+      <button id='clear-cart-button' class="font-semibold mt-1 w-full flex justify-center">Clear cart</button>
+    </div>
+
+  </div>
+
+  <!-- menu -->
+  <section id="menu" class="flex flex-col items-center gap-8 mt-8">
+
+    <!-- mapping through the categories -->
+    {% for category, items in items_by_category.items %}
+    <div class="w-full max-w-3xl">
+      <h4 class="text-center text-2xl">{{ category }}s</h4>
+
+      <div class="flex flex-col md:flex-row gap-4 md:gap-8 mt-8">
+
+        <!-- items in the category -->
+        {% for item in items %}
+        <div class="mb-2 flex-1 p-4 bg-[#60A5FA] rounded-md bg-opacity-20 flex flex-col justify-between">
+          {% if item.image %}
+          <img src="{{ item.image.url }}" alt="{{ item.name }}" class="w-full object-cover rounded-sm">
+          {% endif %}
+
+          <!-- content -->
+          <div class="w-full flex flex-col items-center mt-4">
+            <h6 class="text-lg font-semibold text-[#1E3A8A]">{{ item.name }}</h6>
+            <p>£{{item.price}}</p>
+
+            <p class="mt-4">{{item.description}}</p>
+          </div>
+
+          <button
+            class="add-to-cart w-full bg-[#1E3A8A] text-[#f5f5f5] font-semibold py-2 rounded-sm mt-6 flex gap-2 items-center justify-center flex-row-reverse hover:bg-opacity-90 transition-all"
+            data-id="{{ item.id }}" data-name="{{ item.name }}" data-price="{{ item.price }}">
+            Add to Cart <i class="fa-solid fa-cart-shopping"></i>
+          </button>
+        </div>
+        {% empty %}
+        <div>No items available</div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </section>
+
+
+
 </div>
+
+<!-- JavaScript to handle cart interactions -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Load cart from localStorage
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartSummary = document.getElementById('cart-items');
+    const emptyCartMessage = document.getElementById('empty-cart-message');
+
+    // Function to update cart display
+    function updateCartDisplay() {
+      cartSummary.innerHTML = '';
+      if (cart.length === 0) {
+        emptyCartMessage.classList.remove('hidden'); // Show empty cart message
+      } else {
+        emptyCartMessage.classList.add('hidden'); // Hide empty cart message
+        cart.forEach(item => {
+          const li = document.createElement('li');
+          li.textContent = `${item.name} - £${item.price} x ${item.quantity}`;
+          cartSummary.appendChild(li);
+        });
+      }
+    }
+
+    // Function to add item to cart
+    function addToCart(id, name, price) {
+      const existingItem = cart.find(item => item.id === id);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push({ id, name, price, quantity: 1 });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartDisplay();
+    }
+
+    // Function to clear the cart
+    function clearCart() {
+      localStorage.removeItem('cart');
+      cart.length = 0; // Clear the cart array
+      updateCartDisplay(); // Update UI
+    }
+
+    // Event listener for add-to-cart buttons
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+      button.addEventListener('click', function () {
+        const id = this.getAttribute('data-id');
+        const name = this.getAttribute('data-name');
+        const price = parseFloat(this.getAttribute('data-price'));
+        addToCart(id, name, price);
+      });
+    });
+
+    // Event listener for clear cart button
+    document.getElementById('clear-cart-button').addEventListener('click', function () {
+      clearCart();
+    });
+
+    // Initialize cart display
+    updateCartDisplay();
+
+    function checkout() {
+      
+      if (!localStorage.getItem('cart')) {
+        alert('No cart items!')
+        return
+      }
+
+      const customerName = prompt('Enter your name:', 'Thomas')
+
+
+      fetch('/checkout/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') // Django CSRF token
+        },
+        body: JSON.stringify({
+          cart: cart,
+          customer_name: customerName
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          // alert('Thank you for your order!')
+          // clearCart()
+          // window.location.href = '/progress/'
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+    // get token
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    // Checkout button functionality (you can implement actual checkout logic here)
+    document.getElementById('checkout-button').addEventListener('click', function () {
+      checkout()
+    });
+  });
+</script>
 {% endblock %}

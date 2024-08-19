@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,6 +28,12 @@ SECRET_KEY = 'django-insecure-f6@!(-4*qwk)9g(u)kp=pmmvs=z4+x&^@u4%@!n8gg@vaa3-nm
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+# The URL to use when referring to media files (e.g., in a web browser)
+MEDIA_URL = '/media/'
+
+# The file system path to the directory where media files are stored
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Application definition
