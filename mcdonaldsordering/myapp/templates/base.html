@@ -10,33 +10,35 @@
     Django App
     {% endblock %}
   </title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-    rel="stylesheet" />
 </head>
 
-<body>
+<body class="bg-[#F4F4F9]">
   {% tailwind_css %}
 
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">My Django App</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"><span
-        class="navbar-toggler-icon"></span></button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">About</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Contact</a>
-        </li>
-      </ul>
+  <nav class="container w-full mx-auto px-2 text-[#333333]">
+
+    <div class="w-full flex justify-between max-w-[600px] mx-auto py-2 rounded-md overflow-hidden">
+      <a href="/order"
+        class="w-full group {% if request.path == '/order/' %}border-b-4 border-b-[#1E3A8A]{% else %}text-black{% endif %} px-2 py-1 text-center hover:border-b-4 transition-all ease-in-out hover:border-b-[#1e3a8a]">
+        <p
+          class="text-xl {% if request.path == '/order/' %}text-[#1E3A8A] font-semibold{% else %}text-black{% endif %} group-hover:text-[#1e3a8a] group-hover:font-semibold">Order</p>
+      </a>
+
+      <a href="/fulfilment"
+        class="w-full group {% if request.path == '/fulfilment/' %}border-b-4 border-b-[#1E3A8A]{% else %}text-black{% endif %} px-2 py-1 text-center hover:border-b-4 transition-all ease-in-out hover:border-b-[#1e3a8a]">
+        <p
+          class="text-xl {% if request.path == '/fulfilment/' %}text-[#1E3A8A] font-semibold{% else %}text-black{% endif %} group-hover:text-[#1e3a8a] group-hover:font-semibold">Fulfilment</p>
+      </a>
+
+      <a href="/progress"
+        class="w-full group {% if request.path == '/progress/' %}border-b-4 border-b-[#1E3A8A]{% else %}text-black{% endif %} px-2 py-1 text-center hover:border-b-4 transition-all ease-in-out hover:border-b-[#1e3a8a]">
+        <p
+          class="text-xl {% if request.path == '/progress/' %}text-[#1E3A8A] font-semibold{% else %}text-black{% endif %} group-hover:text-[#1e3a8a] group-hover:font-semibold">Progress</p>
+      </a>
     </div>
   </nav>
-  <div class="container text-red-500">{% block content %} {% endblock %}</div>
+
+  <div class="">{% block content %} {% endblock %}</div>
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
 </body>
