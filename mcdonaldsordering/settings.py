@@ -40,6 +40,9 @@ ALLOWED_HOSTS = ['127.0.0.1',
                  'thomasprice-orderingsystem.onrender.com',
                  'thomasprice-orderingsystem.loophole.site']
 
+
+CSRF_TRUSTED_ORIGINS = ["https://thomasprice-orderingsystem.loophole.site"]
+
 # The URL to use when referring to media files (e.g., in a web browser)
 MEDIA_URL = '/media/'
 
