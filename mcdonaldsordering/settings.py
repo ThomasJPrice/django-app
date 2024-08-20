@@ -12,31 +12,33 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-import dj_database_url
 
-DEBUG = False
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-if not DEBUG:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# For Tailwind CSS
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'theme/static'),
+]
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', '')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-f6@!(-4*qwk)9g(u)kp=pmmvs=z4+x&^@u4%@!n8gg@vaa3-nm')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1',
                  'mcdonalds-ordering-system.onrender.com',
-                 'thomasprice-orderingsystem.onrender.com']
+                 'thomasprice-orderingsystem.onrender.com',
+                 'thomasprice-orderingsystem.loophole.site']
 
 # The URL to use when referring to media files (e.g., in a web browser)
 MEDIA_URL = '/media/'
@@ -71,7 +73,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "django_browser_reload.middleware.BrowserReloadMiddleware",
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'mcdonaldsordering.urls'
@@ -105,11 +106,10 @@ WSGI_APPLICATION = 'mcdonaldsordering.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default='postgresql://postgres:postgres@localhost:5432/mysite',
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
