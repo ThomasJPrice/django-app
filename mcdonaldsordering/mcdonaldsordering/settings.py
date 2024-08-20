@@ -27,8 +27,8 @@ SECRET_KEY = 'django-insecure-f6@!(-4*qwk)9g(u)kp=pmmvs=z4+x&^@u4%@!n8gg@vaa3-nm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '4363-2a02-c7c-e167-f500-a075-d4fb-98d5-5e1.ngrok-free.app', 'mcdonalds-ordering-system.onrender.com']
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'https://4363-2a02-c7c-e167-f500-a075-d4fb-98d5-5e1.ngrok-free.app', 'http://mcdonalds-ordering-system.onrender.com', 'https://mcdonalds-ordering-system.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', '3649-2a02-c7c-e167-f500-a075-d4fb-98d5-5e1.ngrok-free.app', 'mcdonalds-ordering-system.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1', 'https://3649-2a02-c7c-e167-f500-a075-d4fb-98d5-5e1.ngrok-free.app', 'http://3649-2a02-c7c-e167-f500-a075-d4fb-98d5-5e1.ngrok-free.app']
 
 # The URL to use when referring to media files (e.g., in a web browser)
 MEDIA_URL = '/media/'
@@ -56,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
