@@ -34,7 +34,8 @@ SECRET_KEY = 'django-insecure-f6@!(-4*qwk)9g(u)kp=pmmvs=z4+x&^@u4%@!n8gg@vaa3-nm
 DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1',
-                 'mcdonalds-ordering-system.onrender.com']
+                 'mcdonalds-ordering-system.onrender.com',
+                 'thomasprice-orderingsystem.onrender.com']
 
 # The URL to use when referring to media files (e.g., in a web browser)
 MEDIA_URL = '/media/'
