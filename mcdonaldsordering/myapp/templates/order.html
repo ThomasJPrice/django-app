@@ -89,7 +89,7 @@
         emptyCartMessage.classList.add('hidden'); // Hide empty cart message
         cart.forEach(item => {
           const li = document.createElement('li');
-          li.textContent = `${item.name} - £${item.price} x ${item.quantity}`;
+          li.textContent = `${item.name} - £${item.price}`;
           cartSummary.appendChild(li);
         });
       }
@@ -99,7 +99,6 @@
     function addToCart(id, name, price) {
       const existingItem = cart.find(item => item.id === id);
       if (existingItem) {
-        existingItem.quantity += 1;
       } else {
         cart.push({ id, name, price, quantity: 1 });
       }
