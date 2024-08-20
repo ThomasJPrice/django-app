@@ -18,9 +18,7 @@
         </div>
 
         <!-- list of order no's -->
-        <div class="mt-4 flex flex-col gap-2 px-4">
-          <p class="text-4xl font-semibold">009</p>
-          <p class="text-4xl font-semibold">010</p>
+        <div class="mt-4 flex flex-col gap-2 px-4" id='in_progress'>
         </div>
       </div>
 
@@ -30,9 +28,7 @@
         </div>
 
         <!-- list of order no's -->
-        <div class="mt-4 flex flex-col gap-2 px-4">
-          <p class="text-4xl font-semibold text-[#1E3A8A]">007</p>
-          <p class="text-4xl font-semibold text-[#1E3A8A]">008</p>
+        <div class="mt-4 flex flex-col gap-2 px-4" id='completed'>
         </div>
       </div>
 
@@ -43,7 +39,64 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    function createOrderNumber(wrapper, id, type) {
+      const p = document.createElement('p')
+      p.className = type === 'in_progress' ? 'text-4xl font-semibold' : 'text-4xl font-semibold text-[#1E3A8A]'
+      zeroFilled = ('000' + id).substr(-3)
+      p.innerText = zeroFilled
 
+      wrapper.appendChild(p)
+    }
+
+    function getData(type) {
+
+      fetch(`/get-orders?type=${type}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') // Django CSRF token
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          orders = data.orders
+
+          wrapper = document.getElementById(type)
+          wrapper.innerHTML = ''
+
+          orders.forEach((value) => { createOrderNumber(wrapper, value.id, type) })
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+
+    }
+
+    // get token
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    function fetchOrders() {
+      getData('in_progress')
+      getData('completed')
+    }
+
+    fetchOrders();
+
+    setInterval(fetchOrders, 5000);
   })
 </script>
 {% endblock %}

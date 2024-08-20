@@ -58,11 +58,42 @@ def checkout(request):
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 def getOrders(request):
-    orders = Order.objects.filter(status=Order.IN_PROGRESS)
+    type = request.GET.get('type')
+    
+    orders = []
+    
+    if type == 'in_progress':
+        orders = Order.objects.filter(status=Order.IN_PROGRESS)
+    elif type == 'completed':
+        orders = Order.objects.filter(status=Order.COMPLETED)
     
     orders_data = [{
-        'id': order.id
+        'id': order.id,
+        'customer_name': order.customer_name,
+        'items': order.items,
+        'order_time': order.order_time
     } for order in orders]
     
     
     return JsonResponse({'orders': orders_data})
+
+def getAllItems(request):
+    items = MenuItem.objects.all()
+    
+    items_data =[{
+        'id': item.id,
+        'name': item.name
+    } for item in items]
+    
+    return JsonResponse({'items': items_data})
+
+def completeOrder(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        id = data.get('id', 0)
+        
+        Order.objects.filter(id=id).update(status=Order.COMPLETED)
+        
+        return JsonResponse({'message': 'Updated successfully'})
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=400)

@@ -1,6 +1,173 @@
 {% extends "base.html" %} {% block title %} Home Page {% endblock %}
 {% block content %}
-<div class="mt-4">
-  <h2 class="text-center font-semibold text-4xl">Fulfilment</h2>
+<div class="mt-4 flex flex-col items-center text-[#333333]">
+  <!-- section title -->
+  <h2 class="text-center flex flex-col items-center gap-2 font-semibold text-[#1E3A8A] text-3xl md:text-4xl">
+    Fulfilment
+
+    <div class="w-1/2 h-[1px] bg-[#1E3A8A]"></div>
+  </h2>
+
+
+  <section id="fulfilment" class="flex justify-center mt-8 w-full">
+    <div id='orders' class="w-full max-w-3xl px-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- order cards dynamically generate here -->
+    </div>
+  </section>
+
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    async function getOrderItems(items) {
+      // parsing order items from string to array of integers
+      orderItemsString = items.replace(/'/g, '"')
+      const orderItemsArray = JSON.parse(orderItemsString)
+      const orderItemsIntegers = orderItemsArray.map(item => parseInt(item))
+
+      var menuItems = []
+
+      await fetch(`/get-all-items`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') // Django CSRF token
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          items = data.items
+          items.forEach((value) => menuItems.push(value))
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+
+      var structuredOrderItems = []
+
+      orderItemsIntegers.forEach((value) => {
+        structuredOrderItems.push(menuItems.find(({ id }) => id === value).name)
+      })
+
+      return structuredOrderItems
+    }
+
+    async function createOrderCard(wrapper, order) {
+      const orderItems = await getOrderItems(order.items)
+
+      const card = `
+      <div class="w-full bg-[#60A5FA] bg-opacity-20 px-4 py-2 rounded shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between font-medium text-lg">
+            <p class="truncate">${order.customer_name}</p>
+
+            <p>${('000' + order.id).substr(-3)}</p>
+          </div>
+
+          <div class="w-full h-[1px] bg-[#1e3a8a] my-2"></div>
+          
+          <!-- items -->
+          <ul>
+            ${orderItems.map((item) => (
+        `
+              <li class="flex flex-row-reverse justify-between items-center cursor-pointer">
+                <input type="checkbox" id="${order.customer_name}-${order.id}-${item}" class="focus:ring-0 focus:ring-offset-0 bg-transparent focus:ring-transparent checked:text-[#1E3A8A]" />
+                <label for="${order.customer_name}-${order.id}-${item}" class="cursor-pointer w-full">${item}</label>
+              </li>
+            `
+      )).join('')}
+          </ul>  
+        </div>
+
+        <button class="w-full bg-[#1E3A8A] hover:bg-opacity-90 transition-all text-[#f5f5f5] font-semibold py-2 rounded-sm mt-4 complete-button" data-id="${order.id}">Complete order</button>
+      </div>
+      `
+
+      wrapper.innerHTML += card
+    }
+
+    function getData() {
+
+      fetch(`/get-orders?type=in_progress`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') // Django CSRF token
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          orders = data.orders
+
+          wrapper = document.getElementById('orders')
+          wrapper.innerHTML = ''
+
+          orders.forEach((value) => { createOrderCard(wrapper, value) })
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+
+
+    }
+
+    // get token
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    async function completeOrder(id) {
+      await fetch('/complete-order/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken') // Django CSRF token
+        },
+        body: JSON.stringify({
+          id: id,
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('success');
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        })
+    }
+
+    document.getElementById('orders').addEventListener('click', async function (event) {
+      if (event.target.classList.contains('complete-button')) {
+        const id = event.target.getAttribute('data-id');
+        await completeOrder(id)
+        getData()
+      }
+    })
+
+
+    getData()
+
+    // get data every 5 seconds
+    setInterval(getData, 5000);
+  })
+</script>
+
+<style>
+  input[type='checkbox']:checked+label {
+    text-decoration-line: line-through;
+    color: gray;
+  }
+</style>
 {% endblock %}
