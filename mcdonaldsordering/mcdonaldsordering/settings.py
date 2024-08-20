@@ -68,7 +68,7 @@ ROOT_URLCONF = 'mcdonaldsordering.urls'
 TAILWIND_APP_NAME = 'theme'
 
 INTERNAL_IPS = [
-    "127.0.0.1",
+    "0.0.0.0",
 ]
 
 TEMPLATES = [
